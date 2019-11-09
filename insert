@@ -1,0 +1,42 @@
+<?php
+
+//if the submit button has been click
+
+if (isset($_POST['submit']))
+{
+	//connect to the oracle database xe
+	$c = @oci_connect ('system','oracle','//localhost/xe') or die ("Could not connected to oracle server");
+	
+	//retrive the posted new staff info
+	$name = $_POST['name'];
+	$email = $_POST['email'];
+	$password = $_POST['password'];
+	$phoneNo = $_POST['phoneNo'];
+	$position = $_POST['position'];
+	
+	//insert the staff info into the staff tbl
+	$s = oci_parse ($c, "insert into staffmel (name, email, password, phoneNo, position) 
+					values ('$name', '$email', '$password', '$phoneNo', '$position')");
+					
+	$result = oci_execute($s);
+	
+	//display an appropriate message on either success or failed
+	if ($result)
+	{
+		echo "<p>Staff successfully inserted!</p>";
+		oci_commit($c);
+	}
+	else
+	{
+		echo "<p>Inserted failed! Try again</p>";
+		var_dump(oci_error($s));
+	}
+	
+	oci_close($c);
+		
+	
+}
+	//include the insertion form
+	include "insert_staff.php";
+
+?>
